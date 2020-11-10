@@ -1,56 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { useDispatch, useSelector } from "react-redux";
+import { Field, Form, Formik } from "formik";
+import { login, logout } from "./app/user";
+
 
 function App() {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+  if (user) {
+    return (
+      <div>
+        Hi, {user.username}!
+        <button onClick={() => dispatch(logout())}>Logout</button>
+      </div>
+    );
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+    <div>
+      <Formik
+        initialValues={{ username: "", password: "" }}
+        onSubmit={(values) => {
+          dispatch(login(values));
+        }}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <Field type="text" name="username" />
+            <Field type="password" name="password" />
+            <button type="submit" disabled={isSubmitting}>
+              Login
+            </button>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 }
